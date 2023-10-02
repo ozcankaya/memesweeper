@@ -121,9 +121,12 @@ void MemeField::Tile::SetNeighborMemeCount( int memeCount )
 	nNeighborMemes = memeCount;
 }
 
-MemeField::MemeField( const Vei2& center,int nMemes )
+MemeField::MemeField( int width,int height,const Vei2& center,int nMemes )
 	:
-	topLeft( center - Vei2( width * SpriteCodex::tileSize,height * SpriteCodex::tileSize ) / 2 )
+	width( width ),
+	height ( height ),
+	topLeft( center - Vei2( width * SpriteCodex::tileSize,height * SpriteCodex::tileSize ) / 2 ),
+	pTiles( new Tile[width * height] )
 {
 	assert( nMemes > 0 && nMemes < width * height );
 	std::random_device rd;
@@ -207,6 +210,12 @@ MemeField::State MemeField::GetState() const
 	return state;
 }
 
+void MemeField::FreeResources()
+{
+	delete[] pTiles;
+	pTiles = nullptr;
+}
+
 void MemeField::RevealTile( const Vei2& gridPos )
 {
 	Tile& tile = TileAt( gridPos );
@@ -238,12 +247,12 @@ void MemeField::RevealTile( const Vei2& gridPos )
 
 MemeField::Tile& MemeField::TileAt( const Vei2& gridPos )
 {
-	return field[gridPos.y * width + gridPos.x];
+	return pTiles[gridPos.y * width + gridPos.x];
 }
 
 const MemeField::Tile& MemeField::TileAt( const Vei2 & gridPos ) const
 {
-	return field[gridPos.y * width + gridPos.x];
+	return pTiles[gridPos.y * width + gridPos.x];
 }
 
 Vei2 MemeField::ScreenToGrid( const Vei2& screenPos )
@@ -275,8 +284,9 @@ int MemeField::CountNeighborMemes( const Vei2 & gridPos )
 
 bool MemeField::GameIsWon() const
 {
-	for( const Tile& t : field )
+	for( int i = 0; i < width * height; ++i )
 	{
+		const Tile& t = pTiles[i];
 		if( (t.HasMeme() && !t.IsFlagged()) ||
 			(!t.HasMeme() && !t.IsRevealed()) )
 		{
