@@ -80,15 +80,15 @@ void Game::UpdateModel()
 			switch( s )
 			{
 			case SelectionMenu::Size::Small:
-				CreateField( 6,6,4 );
+				CreateField( 5,8,4 );
 				state = State::Memesweeper;
 				break;
 			case SelectionMenu::Size::Medium:
-				CreateField( 16,10,6 );
+				CreateField( 15,14,7 );
 				state = State::Memesweeper;
 				break;
 			case SelectionMenu::Size::Large:
-				CreateField( 30,16,10 );
+				CreateField( 45,24,16 );
 				state = State::Memesweeper;
 				break;
 			}
