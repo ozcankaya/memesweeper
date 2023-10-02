@@ -104,7 +104,6 @@ void Game::CreateField( int nMemes,int width,int height )
 
 void Game::DestroyField()
 {
-	pField->FreeResources();
 	delete pField;
 	pField = nullptr;
 }
